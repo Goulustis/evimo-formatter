@@ -191,14 +191,13 @@ def write_metadata(img_ids, trig_ids, triggers, train_ids, val_ids, test_ids, sa
 
 
 def main(targ_dir, trig_ids_f, rgb_data_dir):
-    # trig_ids_f = "debug/ecam_set/trig_ids.npy"
-    # rgb_data_dir = "/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/flea3_7/sanity/checkerboard/checkerboard_2_tilt_fb_000000"
 
     os.makedirs(targ_dir, exist_ok=True)
 
     ## load the image and copy them over
     rgb_save_dir = osp.join(targ_dir, "rgb", "1x")
-    img_ids, classical_ids = load_and_save_image(rgb_data_dir, rgb_save_dir)[:-1]
+    img_ids, classical_ids = load_and_save_image(rgb_data_dir, rgb_save_dir)
+    img_ids, classical_ids = img_ids[:-1], classical_ids[:-1]
 
     ## make train test split
     train_ids, val_ids, test_ids = write_train_test_metadata(rgb_save_dir, classical_ids, targ_dir)
@@ -219,6 +218,7 @@ def main(targ_dir, trig_ids_f, rgb_data_dir):
 
 
 if __name__ == "__main__":
+    np.random.seed(32)
     parser = argparse.ArgumentParser()
     parser.add_argument("--targ_dir", default="")
     parser.add_argument("--trig_ids_f", default="")
