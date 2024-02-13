@@ -41,6 +41,7 @@ def write_train_valid_split(eimgs_ids, targ_dir):
 
     with open(save_path, "w") as f:
         json.dump(dataset_json, f, indent=2)
+        
 def calc_time_delta(triggers, min_mult=3):
     delta_t = triggers[1] - triggers[0]
     n_mult = np.round(delta_t/0.005)
@@ -49,7 +50,7 @@ def calc_time_delta(triggers, min_mult=3):
     return delta_t/n_mult
 
 def main(targ_dir, evs_data_dir, rgb_data_dir, make_eimgs=True):
-    make_trig_events = True  ## for debug only
+    make_trig_events = False  ## for debug only
 
     
     ## create event images
