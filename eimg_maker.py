@@ -41,13 +41,12 @@ def ev_to_eimg(x, y, p, e_thresh=0.15):
     return e_img.astype(np.int8)
 
 
-def create_event_imgs(events:EventBuffer, triggers=None, time_delta=0.005, create_imgs = True, st_t=0):
+def create_event_imgs(events:EventBuffer, triggers=None, time_delta=0.005, create_imgs = True):
     """
     input:
         events (np.array [type (t, x, y, p)]): events
         triggers (np.array [int]): list of trigger time; will generate tight gap if none
         time_delta (int): time in ms, the time gap to create event images
-        st_t (int): starting time to accumulate the event images
         create_imgs (bool): actually create the event images, might use this function just to
                             get timestamps and ids
 
@@ -128,3 +127,6 @@ def create_eimg_by_triggers(events, triggers, exposure_time = 0.005, make_eimg=T
     
     dummy = np.array(list(range(len(eimg_ts))))
     return eimgs, np.array(eimg_ts), dummy, dummy
+
+
+# def create_deimgs(events:EventBuffer, triggers=None, time_delta=0.005, create_imgs = True, st_t=0):
