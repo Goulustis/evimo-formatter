@@ -198,13 +198,15 @@ class DeimgsCreator:
         clss2img_id = dict(zip(dataset["classical_ids"], dataset["ids"]))
         val_test_ids = dataset["val_ids"] + dataset["test_ids"]
         
-        reproj_clss_ids = sorted(self.reproj_npz["class_keys"])
+        ## NOTE: drop first reproj frame because it is all black and not used for thresh estimation
+        ## see thresh_est/prepare_for_thresh_est.py for detail
+        reproj_clss_ids = sorted(self.reproj_npz["class_keys"])[1:]
         val_cond = np.array([not (clss2img_id.get(cls_id) in val_test_ids) for cls_id in reproj_clss_ids])
 
         all_keys = sorted(list(self.reproj_npz.keys()))
-        reproj_img_keys = np.array([e for e in all_keys if ("classical" in e and (not "mask" in e))])
-        reproj_msk_keys = np.array([e for e in all_keys if ("classical" in e and "mask" in e)])
-        reproj_ts = self.reproj_npz["t"]
+        reproj_img_keys = np.array([e for e in all_keys if ("classical" in e and (not "mask" in e))])[1:]
+        reproj_msk_keys = np.array([e for e in all_keys if ("classical" in e and "mask" in e)])[1:]
+        reproj_ts = self.reproj_npz["t"][1:]
 
         self.val_rprj_img_keys = reproj_img_keys[val_cond]
         self.val_rprj_msk_keys = reproj_msk_keys[val_cond]
@@ -253,21 +255,18 @@ class DeimgsCreator:
                     curr_t, curr_x, curr_y, curr_p = self.events.retrieve_data(st_t, trig_end)
                 
                 visited_end_trig = False
-                while end_t <= trig_end:   # TODO: double check if this will stuck in infinite loop
+                while end_t <= trig_end:  
                     if self.create_imgs:
                         cond = (st_t <= curr_t) & (curr_t <= end_t)
-                        if cond.sum() == 0:
-                            break
-
-                        deimg = self.evs_to_deimgs(curr_x[cond], curr_y[cond], curr_p[cond], prev_img, prev_msk)
-                        deimgs.append(deimg)
-                    
-                    # store stuff
-                    deimg_ids.append(self.get_close_apprce_id(0.5*(st_t + end_t)))
-                    deimg_ts.append(end_t)
-                    deimg_msks.append(prev_msk)
-                    pbar.update(1)
-                    frame_cnt += 1
+                        if cond.sum() != 0:
+                            deimg = self.evs_to_deimgs(curr_x[cond], curr_y[cond], curr_p[cond], prev_img, prev_msk)
+                
+                            # store stuff
+                            deimgs.append(deimg)
+                            deimg_ids.append(self.get_close_apprce_id(0.5*(st_t + end_t)))
+                            deimg_ts.append(end_t)
+                            deimg_msks.append(prev_msk)
+                            frame_cnt += 1
 
                     # update
                     end_t = end_t + self.time_delta
@@ -282,9 +281,9 @@ class DeimgsCreator:
                         reproj_idx += 1
                         prev_img = self.get_img(reproj_idx) #self.reproj_npz[self.val_rprj_img_keys[reproj_idx]]
                         prev_msk = self.reproj_npz[self.val_rprj_msk_keys[reproj_idx]]
-                        st_t = self.val_rprj_ts[reproj_idx + 1]
+                        st_t = self.val_rprj_ts[reproj_idx]
                     
-
+                pbar.update(1)
                 if reproj_idx > len(self.val_rprj_ts):
                     break
         
