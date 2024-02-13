@@ -2,6 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import os.path as osp
 import bisect
+import cv2
 
 from ev_buffer import EventBuffer
 from make_dataset_utils import load_json
@@ -222,6 +223,8 @@ class DeimgsCreator:
 
         return pred_img*msk
 
+    def get_img(self, idx):
+        return cv2.cvtColor(self.reproj_npz[self.val_rprj_img_keys[idx]], cv2.COLOR_BGR2GRAY).astype(np.float32)
 
     def create_deimgs(self):
         
@@ -229,11 +232,12 @@ class DeimgsCreator:
         deimgs = []
         deimg_ids = []
         deimg_ts = []
+        deimg_msks = []
 
         ## initial values
         reproj_idx = 0
         frame_cnt = 0
-        prev_img = self.reproj_npz[self.val_rprj_img_keys[reproj_idx]]
+        prev_img = self.get_img(reproj_idx) #self.reproj_npz[self.val_rprj_img_keys[reproj_idx]]
         prev_msk = self.reproj_npz[self.val_rprj_msk_keys[reproj_idx]]
 
         with tqdm(total=(len(self.triggers) - 1)) as pbar:
@@ -261,6 +265,7 @@ class DeimgsCreator:
                     # store stuff
                     deimg_ids.append(self.get_close_apprce_id(0.5*(st_t + end_t)))
                     deimg_ts.append(end_t)
+                    deimg_msks.append(prev_msk)
                     pbar.update(1)
                     frame_cnt += 1
 
@@ -275,7 +280,7 @@ class DeimgsCreator:
                     # update prev data
                     if end_t > self.val_rprj_ts[reproj_idx + 1]:
                         reproj_idx += 1
-                        prev_img = self.reproj_npz[self.val_rprj_img_keys[reproj_idx]]
+                        prev_img = self.get_img(reproj_idx) #self.reproj_npz[self.val_rprj_img_keys[reproj_idx]]
                         prev_msk = self.reproj_npz[self.val_rprj_msk_keys[reproj_idx]]
                         st_t = self.val_rprj_ts[reproj_idx + 1]
                     
@@ -285,6 +290,6 @@ class DeimgsCreator:
         
         if self.create_imgs:
             # NOTE: no trig ids, since assume colcam set already made
-            return np.stack(deimgs), np.array(deimg_ts, dtype=np.float32), np.array(deimg_ids, dtype=np.int32)
+            return np.stack(deimgs), np.array(deimg_ts, dtype=np.float32), np.array(deimg_ids, dtype=np.int32), np.stack(deimg_msks)
         else:
             return None, np.array(deimg_ts), np.array(deimg_ids, dtype=np.int32)
