@@ -505,6 +505,7 @@ def convert(file, flow_dt, quiet=False, showflow=True, overwrite=False,
     last_time=float('nan')
     last_delta_time=float('nan')
     delta_times=[]
+    used_bgr_keys = []
     start_time=float('nan')
     large_delta_times=0
 
@@ -532,6 +533,7 @@ def convert(file, flow_dt, quiet=False, showflow=True, overwrite=False,
             bgr_bgr_frame_key      = 'classical_'  + str(bgr_frame_info['id'] - bgr_first_frame_id).rjust(10, '0')
             bgr_depth_frame_mm = bgr_depth[bgr_depth_frame_mm_key]
             bgr_bgr_frame      = bgr_bgr  [bgr_bgr_frame_key]
+            used_bgr_keys.append(bgr_bgr_frame_key)
 
             bgr_depth_frame_float_m = bgr_depth_frame_mm.astype(np.float32) / 1000.0
 
@@ -738,6 +740,7 @@ def convert(file, flow_dt, quiet=False, showflow=True, overwrite=False,
         close_npz(npz_flow_file)
         if bgr_file is not None:
             add_to_npz(npz_bgr_file, 't', timestamps)
+            add_to_npz(npz_bgr_file, "classical_keys", np.array(used_bgr_keys))
             close_npz(npz_bgr_file)
     else:
         raise Exception('Unsupported EVIMO format')
