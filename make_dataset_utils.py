@@ -116,6 +116,23 @@ def write_metadata(eimgs_ids, eimgs_ts, targ_dir):
     with open(osp.join(targ_dir, "metadata.json"), "w") as f:
         json.dump(metadata, f, indent=2)
 
+
+def write_train_valid_split(eimgs_ids, targ_dir):
+    eimgs_ids = [str(int(e)).zfill(6) for e in eimgs_ids]
+    save_path = osp.join(targ_dir, "dataset.json")
+
+    train_ids = sorted(eimgs_ids)
+    dataset_json = {
+        "count":len(eimgs_ids),
+        "num_exemplars":len(train_ids),
+        "train_ids": eimgs_ids,
+        "val_ids":[]
+    }
+
+    with open(save_path, "w") as f:
+        json.dump(dataset_json, f, indent=2)
+
+
 def load_json(json_f):
    with open(json_f, "r") as f:
       return json.load(f)

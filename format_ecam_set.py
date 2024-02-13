@@ -13,33 +13,21 @@ from camera_utils import (load_intrinsics_data,
                           load_rig_extrnxs,
                           warp_camera_frame)
 from slerp_qua import create_interpolated_ecams
-from make_dataset_utils import create_and_write_camera_extrinsics, write_metadata, find_data_dir
+from make_dataset_utils import (create_and_write_camera_extrinsics, 
+                               write_metadata, 
+                               find_data_dir,
+                               write_train_valid_split)
 
 
 def save_eimgs(eimgs, targ_dir):
     if eimgs is None:
         return 
 
-    eimgs_dir = osp.join(targ_dir, "eimgs")
+    eimgs_dir = targ_dir
     os.makedirs(eimgs_dir, exist_ok=True)
     np.save(osp.join(eimgs_dir, "eimgs_1x.npy"), eimgs)
     del eimgs
 
-
-def write_train_valid_split(eimgs_ids, targ_dir):
-    eimgs_ids = [str(int(e)).zfill(6) for e in eimgs_ids]
-    save_path = osp.join(targ_dir, "dataset.json")
-
-    train_ids = sorted(eimgs_ids)
-    dataset_json = {
-        "count":len(eimgs_ids),
-        "num_exemplars":len(train_ids),
-        "train_ids": eimgs_ids,
-        "val_ids":[]
-    }
-
-    with open(save_path, "w") as f:
-        json.dump(dataset_json, f, indent=2)
 
 def calc_time_delta(triggers, min_mult=3):
     delta_t = triggers[1] - triggers[0]
@@ -63,7 +51,7 @@ def main(targ_dir, evs_data_dir, rgb_data_dir, make_eimgs=True):
     else:    
         eimgs, eimg_ts, eimgs_ids, trig_ids = create_event_imgs(events, triggers, create_imgs=make_eimgs, time_delta=time_delta)
 
-    save_eimgs(eimgs, targ_dir)
+    save_eimgs(eimgs, osp.join(targ_dir, "eimgs"))
 
     ## create extrinsics
     extrinsic_targ_dir = osp.join(targ_dir, "camera")
