@@ -75,8 +75,8 @@ class EventBuffer:
         return (~polarity.astype(bool)).astype(ptype)
 
     def retrieve_data(self, st_t, end_t, is_far=False):
-        # NOTE: THIS FUNCTION DOES NOT FLIP THE POLARITY
-        if (self.t_cache[0] > st_t) or is_far:
+        # NOTE: THIS FUNCTION FLIP POLARITY SINCE SAMSUNG CAMERA IS OPPOSITE
+        if (len(self.t_cache) == 0) or (self.t_cache[0] > st_t) or is_far:
             ## if st_t already out of range
             idx = bisect.bisect(self.t_f, st_t)
             idx = idx if ((st_t == self.t_f[idx]) or st_t <= self.t_f[0]) else idx - 1
