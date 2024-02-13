@@ -533,7 +533,6 @@ def convert(file, flow_dt, quiet=False, showflow=True, overwrite=False,
             bgr_bgr_frame_key      = 'classical_'  + str(bgr_frame_info['id'] - bgr_first_frame_id).rjust(10, '0')
             bgr_depth_frame_mm = bgr_depth[bgr_depth_frame_mm_key]
             bgr_bgr_frame      = bgr_bgr  [bgr_bgr_frame_key]
-            used_bgr_keys.append(bgr_bgr_frame_key)
 
             bgr_depth_frame_float_m = bgr_depth_frame_mm.astype(np.float32) / 1000.0
 
@@ -684,6 +683,10 @@ def convert(file, flow_dt, quiet=False, showflow=True, overwrite=False,
         # Save results
         timestamps[i]     = relative_time
         end_timestamps[i] = right_time
+        if bgr_file is not None:
+            used_bgr_keys.append(bgr_bgr_frame_key)
+
+
         if use_ros_time_offset:
             timestamps[i]  += ros_time_offset
             end_timestamps += ros_time_offset
@@ -740,7 +743,7 @@ def convert(file, flow_dt, quiet=False, showflow=True, overwrite=False,
         close_npz(npz_flow_file)
         if bgr_file is not None:
             add_to_npz(npz_bgr_file, 't', timestamps)
-            add_to_npz(npz_bgr_file, "classical_keys", np.array(used_bgr_keys))
+            add_to_npz(npz_bgr_file, "class_keys", np.array(used_bgr_keys))
             close_npz(npz_bgr_file)
     else:
         raise Exception('Unsupported EVIMO format')
