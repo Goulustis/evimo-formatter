@@ -8,8 +8,7 @@ import argparse
 
 from ev_buffer import EventBuffer
 from eimg_maker import create_event_imgs, create_eimg_by_triggers
-from camera_utils import (load_camera_data, 
-                          load_intrinsics_data, 
+from camera_utils import (load_intrinsics_data, 
                           load_extrinsics_data, 
                           load_rig_extrnxs,
                           warp_camera_frame)
@@ -41,7 +40,7 @@ def write_train_valid_split(eimgs_ids, targ_dir):
 
     with open(save_path, "w") as f:
         json.dump(dataset_json, f, indent=2)
-        
+
 def calc_time_delta(triggers, min_mult=3):
     delta_t = triggers[1] - triggers[0]
     n_mult = np.round(delta_t/0.005)
@@ -102,7 +101,5 @@ if __name__ == "__main__":
     find_dir_fn = lambda x : find_data_dir(x, args.scene)
     evs_data_dir, rgb_data_dir = find_dir_fn(args.evs_data_dir), find_dir_fn(args.rgb_data_dir)
 
-    # print(evs_data_dir, "=======")
-    # assert 0
 
     main(args.targ_dir, evs_data_dir, rgb_data_dir, args.make_eimgs)
