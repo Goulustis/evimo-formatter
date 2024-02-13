@@ -115,3 +115,7 @@ def write_metadata(eimgs_ids, eimgs_ts, targ_dir):
     
     with open(osp.join(targ_dir, "metadata.json"), "w") as f:
         json.dump(metadata, f, indent=2)
+
+def load_json(json_f):
+   with open(json_f, "r") as f:
+      return json.load(json_f)
