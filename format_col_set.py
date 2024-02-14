@@ -91,7 +91,7 @@ def find_clear_val_test(img_dir):
     for e in best:
         clear_image_idxs.append(img_idxs[e])
     # return test, val
-    return clear_image_idxs[:15], clear_image_idxs[15:]
+    return sorted(clear_image_idxs[:15]), sorted(clear_image_idxs[15:])
 
 
 def load_frame_data(img_npz_f, ret_id=False, prefix=None, idxs=None):
