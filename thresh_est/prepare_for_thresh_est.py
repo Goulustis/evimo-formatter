@@ -72,9 +72,6 @@ def save_sume_and_sump(evs_data_dir, reproj_f, save_dir):
 
 
 def main(evs_data_dir=None, targ_dir=None):
-    targ_dir = "dev_est_scene_03_03_000002"
-    evs_data_dir = "/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/samsung_mono/sfm/eval/scene_03_03_000002"
-
 
     reproj_f = osp.join(evs_data_dir, "dataset_reprojected_classical.npz")
     save_img_dir = osp.join(targ_dir, "images")
