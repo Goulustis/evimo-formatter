@@ -15,8 +15,19 @@ from slerp_qua import create_interpolated_ecams
 from make_dataset_utils import (create_and_write_camera_extrinsics, 
                                write_metadata, 
                                find_data_dir,
-                               write_train_valid_split)
+                               write_train_valid_split,
+                               load_json, find_closest_index)
 import argparse
+
+def copy_msk_to_ecamset(ecam_dir, deimg_msks, deimg_ts):
+    print("copying mask to ecamset")
+    ecam_meta = load_json(osp.join(ecam_dir, "metadata.json"))
+    ecam_ts = [ecam_meta[k]["t"] for k in sorted(ecam_meta.keys())]
+    ecam_msk_idx = np.array([find_closest_index(deimg_ts, t) for t in ecam_ts])
+    ecam_msks = deimg_msks[ecam_msk_idx]
+
+    np.save(osp.join(ecam_dir, "msk.npy"), ecam_msks)
+
 
 def main(evs_data_dir, rgb_data_dir, colcam_dir, ecam_dir, thresh_dir, targ_dir):
 
@@ -33,7 +44,7 @@ def main(evs_data_dir, rgb_data_dir, colcam_dir, ecam_dir, thresh_dir, targ_dir)
                                  scales, biases, colcam_dir, ecam_dir, time_delta)
     deimgs, deimg_ts, deimg_ids, deimg_msks  = deimgCreator.create_deimgs()
     save_eimgs(deimgs, osp.join(targ_dir, "eimgs"))
-    save_eimgs(deimg_msks, osp.join(targ_dir, "eimg_msks"))
+    np.save("msk.npy", deimg_msks)
 
     ## create extrinsics
     extrinsic_targ_dir = osp.join(targ_dir, "camera")
@@ -54,6 +65,8 @@ def main(evs_data_dir, rgb_data_dir, colcam_dir, ecam_dir, thresh_dir, targ_dir)
 
     # create train valid split
     write_train_valid_split(deimg_ids, targ_dir)
+
+    copy_msk_to_ecamset(ecam_dir, deimg_msks, deimg_ts)
 
 
 if __name__ == "__main__":
