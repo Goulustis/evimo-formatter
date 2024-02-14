@@ -204,6 +204,7 @@ class DeimgsCreator:
         pos_acc = ev_to_eimg(xs[pos_cond], ys[pos_cond], ps[pos_cond], img_size=prev_img.shape[:2]).astype(np.float32)
         neg_acc = ev_to_eimg(xs[neg_cond], ys[neg_cond], np.ones(sum(neg_cond)), img_size=prev_img.shape[:2]).astype(np.float32)
 
+        # consult calculation details heres: https://github.com/ziweiWWANG/Event-Camera-Calibration/blob/805804431643cb432999ad56b67a83338a81c302/ImageReconstruction.m#L113
         pred_log = np.log(prev_img + self.logSafetyOffset) + pos_acc * self.pos_threshes + neg_acc * self.neg_threshes
         pred_img = np.exp(pred_log) - self.logSafetyOffset
 
