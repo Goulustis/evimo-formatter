@@ -72,4 +72,4 @@ if __name__ == "__main__":
     evs_data_dir, rgb_data_dir = find_dir_fn(args.evs_data_dir), find_dir_fn(args.rgb_data_dir)
 
 
-    main(args.evs_data_dir, rgb_data_dir, evs_data_dir, args.thresh_dir, args.targ_dir)
+    main(evs_data_dir, rgb_data_dir, args.colcam_dir, args.ecam_dir, args.thresh_dir, args.targ_dir)
