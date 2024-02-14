@@ -24,7 +24,7 @@ def find_clear_val_test(img_dir):
     ## ignore last frame for complications
     img_fs = sorted(glob.glob(osp.join(img_dir, "*.png")))[:-1]
     
-    ignore_first = 0
+    ignore_first = 30
     img_idxs = [osp.basename(f).split(".")[0] for f in img_fs]
     img_idxs = img_idxs[ignore_first:]
 
