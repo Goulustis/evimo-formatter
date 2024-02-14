@@ -31,7 +31,7 @@ def ev_to_eimg(x, y, p, img_size = None):
 
 
     if img_size is None:
-        h, w = 720, 1280
+        h, w = 480, 640
     else:
         h, w = img_size
 
