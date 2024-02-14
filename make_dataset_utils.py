@@ -6,6 +6,7 @@ import glob
 
 from concurrent import futures
 from tqdm import tqdm
+import argparse
 
 SRC_EVS_ROOT="/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/samsung_mono"
 SRC_RGB_ROOT="/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/flea3_7"
@@ -136,3 +137,14 @@ def write_train_valid_split(eimgs_ids, targ_dir):
 def load_json(json_f):
    with open(json_f, "r") as f:
       return json.load(f)
+
+
+if __name__ == "__main__":
+   ## I'm lazy, just gonna do the call here
+   parser = argparse.ArgumentParser()
+   parser.add_argument("--src_dir")
+   parser.add_argument("--scene")
+   args = parser.parse_args()
+   
+   path = find_data_dir(args.src_dir, args.scene)
+   print(path)
