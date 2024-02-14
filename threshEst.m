@@ -24,7 +24,7 @@ function threshEst(dataset_dir, targ_dir)
 
     start_idx = 1;
     end_idx = numel(dir(dataset_dir + "/images")) - 24;
-    log_safety_offset = 30;
+    log_safety_offset = 90;
     % log_safety_offset = 10;
 
 
