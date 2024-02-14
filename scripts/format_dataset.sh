@@ -40,7 +40,7 @@ python project_rgb_to_evs.py \
 
 python thresh_est/prepare_for_thresh_est.py --evs_data_dir $SRC_EVS_ROOT \
                                             --scene $SCENE \
-                                            --targ_dir $prep_dir
+                                            --targ_dir $THRESH_PREP_DIR
 
 echo threshold estimating
 matlab -nodisplay -nosplash -nodesktop -batch "threshEst('$THRESH_PREP_DIR', '$THRESH_PREP_DIR');exit;"
