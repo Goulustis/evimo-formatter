@@ -72,12 +72,7 @@ def save_sume_and_sump(evs_data_dir, reproj_f, save_dir):
 
 
 def main(evs_data_dir=None, targ_dir=None):
-    evs_src_dir = ""
-    scene = ""
-    # targ_dir = "/ubc/cs/research/kmyi/matthew/projects/Event-Camera-Calibration/scene_03_03_000002"
     targ_dir = "dev_est_scene_03_03_000002"
-
-    # evs_data_dir = find_data_dir(evs_src_dir, scene)
     evs_data_dir = "/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/samsung_mono/sfm/eval/scene_03_03_000002"
 
 
@@ -91,7 +86,12 @@ def main(evs_data_dir=None, targ_dir=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--evs_data_dir", default="")
+    parser.add_argument("--scene", default="")
     parser.add_argument("--targ_dir", default="")
 
     args = parser.parse_args()
-    main(args.evs_data_dir, args.targ_dir)
+    find_dir_fn = lambda x : find_data_dir(x, args.scene)
+    evs_data_dir = find_dir_fn(args.evs_data_dir)
+
+
+    main(evs_data_dir, args.targ_dir)
