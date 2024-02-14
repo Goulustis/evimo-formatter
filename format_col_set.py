@@ -26,7 +26,6 @@ def find_clear_val_test(img_dir):
     
     ignore_first = 30
     img_idxs = [osp.basename(f).split(".")[0] for f in img_fs]
-    img_idxs = img_idxs[ignore_first:]
 
     # Load images
     images = parallel_map(cv2.imread, img_fs, show_pbar=True, desc="loading imgs")
@@ -80,7 +79,8 @@ def find_clear_val_test(img_dir):
         blur_score = directional_blur_scores[antiblur_index]
         blur_scores.append(blur_score)
     
-    ids = np.argsort(blur_scores) + ignore_first
+    # ids = np.argsort(blur_scores) + ignore_first
+    ids = np.argsort(blur_scores[-ignore_first:]) + ignore_first
     best = ids[-30:]
     np.random.shuffle(best)
     # best = list(str(x) for x in best)
@@ -248,6 +248,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     rgb_data_dir = find_data_dir(args.rgb_data_dir, args.scene)
-
-
-    main(args.targ_dir, args.trig_ids_f, rgb_data_dir)
+    main()
