@@ -135,6 +135,24 @@ def load_and_save_image(rgb_data_dir, save_img_dir, scale=2, img_npz_f = None):
     return img_ids, classical_ids
 
 
+def load_and_save_msk(rgb_data_dir, save_msk_dir, scale=2, depth_npz_f=None):
+    os.makedirs(save_msk_dir, exist_ok=True)
+    if depth_npz_f is None:
+        depth_npz_f = osp.join(rgb_data_dir, "dataset_mask.npz")
+    
+    msks, _ = load_frame_data(depth_npz_f, ret_id=True)
+    ## downsize image by 2x as in de-nerf paper
+    h, w = msks[0].shape[:2]
+    new_size = w//scale, h//scale
+    msks = parallel_map(lambda x : cv2.resize(x, new_size, interpolation=cv2.INTER_AREA), 
+                        msks, show_pbar=True, desc="downsize imgs")
+    msks = np.stack(msks) > 0
+
+    save_mks_f = osp.join(save_msk_dir, "msk.npy")
+    np.save(save_mks_f, msks)
+    return len(msks)
+
+
 def write_train_test_metadata(img_dir, classical_ids, save_dir):
     # drop last frame to deal with complications
     img_ids = get_img_ids(img_dir)[:-1]
@@ -197,6 +215,9 @@ def main(targ_dir, trig_ids_f, rgb_data_dir):
     ## load the image and copy them over
     rgb_save_dir = osp.join(targ_dir, "rgb", "1x")
     img_ids, classical_ids = load_and_save_image(rgb_data_dir, rgb_save_dir)
+    n_msks = load_and_save_msk(rgb_data_dir,targ_dir)
+
+    assert n_msks == len(img_ids), "num mask != num images!"
     img_ids, classical_ids = img_ids[:-1], classical_ids[:-1]
 
     ## make train test split
