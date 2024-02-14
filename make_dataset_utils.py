@@ -7,6 +7,7 @@ import glob
 from concurrent import futures
 from tqdm import tqdm
 import argparse
+import bisect
 
 SRC_EVS_ROOT="/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/samsung_mono"
 SRC_RGB_ROOT="/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/flea3_7"
@@ -137,6 +138,25 @@ def write_train_valid_split(eimgs_ids, targ_dir):
 def load_json(json_f):
    with open(json_f, "r") as f:
       return json.load(f)
+
+
+def find_closest_index(nums, target):
+    # Get the position where 'target' should be inserted to keep the list sorted
+    pos = bisect.bisect_left(nums, target)
+
+    # If 'pos' is 0, the target is less than the first element
+    if pos == 0:
+        return 0
+    # If 'pos' is equal to the length of the list, target is greater than any element in the list
+    if pos == len(nums):
+        return len(nums) - 1
+
+    # Check if the target is closer to the previous element or the element at 'pos'
+    if abs(target - nums[pos - 1]) <= abs(nums[pos] - target):
+        return pos - 1
+    else:
+        return pos
+
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ import cv2
 
 from ev_buffer import EventBuffer
 from make_dataset_utils import load_json
+from make_dataset_utils import find_closest_index
 
 def eimg_to_img(eimg, col=True):
 
@@ -169,25 +170,8 @@ class DeimgsCreator:
         self.ecam_ts = np.array([ecam_meta[key]["t"] for key in keys])
     
 
-    def find_closest_index(self, nums, target):
-        # Get the position where 'target' should be inserted to keep the list sorted
-        pos = bisect.bisect_left(nums, target)
-
-        # If 'pos' is 0, the target is less than the first element
-        if pos == 0:
-            return 0
-        # If 'pos' is equal to the length of the list, target is greater than any element in the list
-        if pos == len(nums):
-            return len(nums) - 1
-
-        # Check if the target is closer to the previous element or the element at 'pos'
-        if abs(target - nums[pos - 1]) <= abs(nums[pos] - target):
-            return pos - 1
-        else:
-            return pos
-
     def get_close_apprce_id(self, t):
-        idx = self.find_closest_index(self.ecam_ts, t)
+        idx = find_closest_index(self.ecam_ts, t)
         return self.ecam_apperance_ids[idx]
     
     def _filter_test_valid_keys(self):
