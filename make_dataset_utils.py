@@ -162,9 +162,14 @@ def find_closest_index(nums, target):
 if __name__ == "__main__":
    ## I'm lazy, just gonna do the call here
    parser = argparse.ArgumentParser()
-   parser.add_argument("--src_dir")
+   parser.add_argument("--src_dir", default=None)
    parser.add_argument("--scene")
    args = parser.parse_args()
    
-   path = find_data_dir(args.src_dir, args.scene)
+   
+   if args.src_dir is None:
+      path = get_data_dir(args.scene, "evs")
+   else:
+      path = find_data_dir(args.src_dir, args.scene)
+   
    print(path)
