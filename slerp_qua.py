@@ -279,12 +279,12 @@ def quaternion_slerp(quat0, quat1, fraction, spin=0, shortestpath=True):
     return q0
 
 
-def create_interpolated_ecams(eimg_ts, triggers, trig_ecams):
+def create_interpolated_cams(interp_ts, ctrl_ts, ctrl_extrns):
     """
     input:
-        eimg_ts (np.array): starting times at which the image is accumulated
-        triggers (np.array): col img starting time
-        trig_ecams (np.array): world to camera matrix extrinsics of event camera at trigger times
+        interp_ts (np.array): starting times at which the image is accumulated
+        ctrl_ts (np.array): col img starting time
+        ctrl_extrns (np.array): world to camera matrix extrinsics of event camera at trigger times
 
     returns:
         ecams_int (np.array): interpolated extrinsic positions
@@ -295,10 +295,10 @@ def create_interpolated_ecams(eimg_ts, triggers, trig_ecams):
         ts = w2cs[:,:3, 3]
         return Rs, ts
     
-    Rs, ts = split_extrnx(trig_ecams)
-    cam_spline = CameraSpline(triggers, Rs, ts)
+    Rs, ts = split_extrnx(ctrl_extrns)
+    cam_spline = CameraSpline(ctrl_ts, Rs, ts)
     # cam_spline = LanczosSpline(triggers, Rs, ts)
-    int_ts, int_Rs =  cam_spline.interpolate(eimg_ts)
+    int_ts, int_Rs =  cam_spline.interpolate(interp_ts)
 
     if len(int_ts.shape) == 2:
         int_ts = int_ts[..., None]
