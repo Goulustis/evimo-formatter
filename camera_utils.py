@@ -88,7 +88,7 @@ def warp_camera_frame(w2cs, Tre, Trc):
     Trc: camera, c, to rig
 
     return:
-        w2es
+        w2es: world to event cameras
     """
 
     Tcw = w2cs
