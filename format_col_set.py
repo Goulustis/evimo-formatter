@@ -20,11 +20,32 @@ from make_dataset_utils import create_and_write_camera_extrinsics, parallel_map,
 get_img_ids = lambda img_dir : [osp.basename(f).split(".")[0] for f in sorted(glob.glob(osp.join(img_dir, "*.png")))]
 
 
+def split_and_find_indices(nums, num_parts):
+    part_size = len(nums) // num_parts  # Determine the size of each part
+    indices = []  # To store the original indices of the smallest elements in each part
+
+    for part in range(num_parts):
+        start_index = part * part_size
+        # Handle the last part which might contain the remaining elements
+        end_index = start_index + part_size if part < num_parts - 1 else len(nums)
+
+        # Extract the part
+        current_part = nums[start_index:end_index]
+        
+        # Find the smallest element and its index in the current part
+        min_index_in_part = current_part.index(min(current_part))
+        
+        # Calculate the original index in the full list and add it to the result
+        original_index = start_index + min_index_in_part
+        indices.append(original_index)
+
+    return indices
+
 def find_clear_val_test(img_dir):
     ## ignore last frame for complications
     img_fs = sorted(glob.glob(osp.join(img_dir, "*.png")))[:-1]
     
-    ignore_first = 30
+    ignore_first = 32
     img_idxs = [osp.basename(f).split(".")[0] for f in img_fs]
 
     # Load images
@@ -248,4 +269,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     rgb_data_dir = find_data_dir(args.rgb_data_dir, args.scene)
-    main()
+    main(args.targ_dir, args.trig_ids_f, rgb_data_dir)
