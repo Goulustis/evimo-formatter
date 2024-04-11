@@ -99,7 +99,13 @@ class EventBuffer:
     def drop_cache_by_t(self, t):
         cond = self.t_cache >= t
         self.drop_cache_by_cond(cond)
+    
+    def validate_time(self, st_t):
+        return st_t < self.t_f[-1]
 
+    def drop_cache_by_t(self, t):
+        cond = self.t_cache >= t
+        self.drop_cache_by_cond(cond)
 
 if __name__ == "__main__":
     evs_data_dir = '/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/samsung_mono/sanity/checkerboard/checkerboard_2_tilt_fb_000000'
