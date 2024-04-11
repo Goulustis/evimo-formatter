@@ -142,3 +142,9 @@ def inv_transform(T_ba):
     mtx[:3,3] = T_ba[:3]
 
     return np.linalg.inv(mtx)[:4]
+
+
+def scale_intrxs(intrxs:np.ndarray, scale:float):
+    u = intrxs.copy()
+    u[:2] = u[:2] * scale
+    return u
