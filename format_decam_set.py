@@ -11,7 +11,7 @@ from camera_utils import (load_intrinsics_data,
                           load_extrinsics_data, 
                           load_rig_extrnxs,
                           warp_camera_frame)
-from slerp_qua import create_interpolated_ecams
+from slerp_qua import create_interpolated_cams
 from make_dataset_utils import (create_and_write_camera_extrinsics, 
                                write_metadata, 
                                find_data_dir,
@@ -56,7 +56,7 @@ def main(evs_data_dir, rgb_data_dir, colcam_dir, ecam_dir, thresh_dir, targ_dir)
     ctrl_evs_cams = warp_camera_frame(rgb_cams, Tre, Trc)
     ctrl_evs_ts = rgb_ts
 
-    ecams = create_interpolated_ecams(deimg_ts, ctrl_evs_ts, ctrl_evs_cams)
+    ecams = create_interpolated_cams(deimg_ts, ctrl_evs_ts, ctrl_evs_cams)
 
     create_and_write_camera_extrinsics(extrinsic_targ_dir, ecams, deimg_ts, intr_mtx, dist, img_size=(640, 480))
 

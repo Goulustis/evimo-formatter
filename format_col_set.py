@@ -12,7 +12,7 @@ import argparse
 from sklearn.model_selection import train_test_split
 
 from camera_utils import load_camera_data, load_ts
-from slerp_qua import create_interpolated_ecams
+from slerp_qua import create_interpolated_cams
 from make_dataset_utils import create_and_write_camera_extrinsics, parallel_map, find_data_dir
 
 
@@ -251,7 +251,7 @@ def main(targ_dir, trig_ids_f, rgb_data_dir):
     ## write the extrinsics
     extrinsic_targ_dir = osp.join(targ_dir, "camera")
     ## rescale image by half according to de-nerf paper
-    extrinsics = create_interpolated_ecams(rgb_ts, ctrl_ts, ctrl_extrxs)
+    extrinsics = create_interpolated_cams(rgb_ts, ctrl_ts, ctrl_extrxs)
     create_and_write_camera_extrinsics(extrinsic_targ_dir, extrinsics, rgb_ts, intrxs, dist, scale=0.5, img_size=(2080, 1552))
     # create_and_write_camera_extrinsics(extrinsic_targ_dir, extrinsics, triggers, intrxs, dist, img_size=(2080, 1552))
 
