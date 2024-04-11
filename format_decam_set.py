@@ -44,7 +44,7 @@ def main(evs_data_dir, rgb_data_dir, colcam_dir, ecam_dir, thresh_dir, targ_dir)
                                  scales, biases, colcam_dir, ecam_dir, time_delta)
     deimgs, deimg_ts, deimg_ids, deimg_msks  = deimgCreator.create_deimgs()
     save_eimgs(deimgs, osp.join(targ_dir, "eimgs"))
-    np.save("msk.npy", deimg_msks)
+    np.save(osp.join(targ_dir, "msk.npy"), deimg_msks)
 
     ## create extrinsics
     extrinsic_targ_dir = osp.join(targ_dir, "camera")
