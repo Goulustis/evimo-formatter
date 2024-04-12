@@ -54,7 +54,7 @@ class ColsetFormatter:
         self.undist_K[1, 2] = self.undist_K[1, 2] - y
         self.save_undist_K = scale_intrxs(self.undist_K, self.scale)
 
-        self.targ_img_size = (int(h*self.scale), int(w*self.scale))
+        self.targ_img_size = (round(h*self.scale), round(w*self.scale))
 
         # assume camera transform to be:
         # 1) undistort
@@ -67,12 +67,12 @@ class ColsetFormatter:
     def transform_and_save_img(self, imgs, scale = 0.5):
         # NOTE: ensure transform is consistent with intrnxs in _init_camera_data
         im_h, im_w = imgs[0].shape[:2]
-        new_size = (int(im_w*scale), int(im_h*scale))
         mapx, mapy = cv2.initUndistortRectifyMap(
             self.src_K, self.src_D, None, self.undist_K, (im_w, im_h), cv2.CV_32FC1
         )
         x, y, w, h = self.roi
 
+        new_size = (round(w*scale), round(h*scale))  # should be the same as self.targ_img_size
         undist = lambda img : cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
         scale_img = lambda img : cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)  
 
