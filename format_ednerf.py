@@ -18,6 +18,8 @@ from slerp_qua import create_interpolated_cams
 from ev_buffer import EventBuffer
 from eimg_maker import ev_to_eimg
 
+np.set_printoptions(precision=3)
+
 
 class ColsetFormatter:
     def __init__(self, src_dir, targ_dir, n_bin = 4):
@@ -213,7 +215,7 @@ class EcamsetFormatter:
             self.src_K, self.src_D, None, self.undist_K, (im_w, im_h), cv2.CV_32FC1
         )
 
-        undist_fn = lambda img : cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)[y:y+h, x:x+w]
+        undist_fn = lambda img : cv2.remap(img, mapx, mapy, cv2.INTER_NEAREST)[y:y+h, x:x+w]
         frame_cnter = 0
         for i in tqdm(range(len(eimgs)), desc="creating eimgs"):
             frame_cnter += 1
@@ -327,6 +329,13 @@ def create_and_save_relcam(Trc, Tre, targ_dir):
 
 
 
+def to_hom(mtxs):
+    u = np.zeros((len(mtxs), 4, 4))
+    u[:, 3, 3] = 1
+    u[:,:3, :4] = mtxs[:,:3, :4]
+    return u
+
+
 def main(src_rgb_dir, src_evs_dir, targ_dir, n_bin=4):
     col_targ_dir = osp.join(targ_dir, "colcam_set")
     evs_targ_dir = osp.join(targ_dir, "ecam_set")
@@ -335,7 +344,8 @@ def main(src_rgb_dir, src_evs_dir, targ_dir, n_bin=4):
     col_formatter.format_colcam_set()
 
     evs_formatter = EcamsetFormatter(src_evs_dir, evs_targ_dir, n_bin=n_bin)
-    evs_formatter.format_ecamset(col_formatter.warp_to_ecam(evs_formatter.Tre), 
+    ecam_extrnsics = col_formatter.warp_to_ecam(evs_formatter.Tre)
+    evs_formatter.format_ecamset(ecam_extrnsics, 
                                  col_formatter.src_ts,
                                  col_formatter.rgb_ts)
 
@@ -349,6 +359,7 @@ if __name__ == "__main__":
     rgb_src_dir = find_data_dir(rgb_src_root, scene)
     evs_src_dir = find_data_dir(evs_src_root, scene)
     targ_dir = "/ubc/cs/research/kmyi/matthew/projects/ed-nerf/data/depth_var_1_lr_000000_rect"
+    # targ_dir = "debug"
 
     main(
         rgb_src_dir,
