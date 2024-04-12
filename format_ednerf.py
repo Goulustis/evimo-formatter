@@ -88,18 +88,19 @@ class ColsetFormatter:
         parallel_map(transform_and_save_fn, list(zip(self.img_ids, imgs)), show_pbar=True, desc="saving imgs")
         self.img_ids = self.img_ids[:-1] # remove last image to avoid bugs
 
-    def get_targ_img_size(self):
-        # return glob.glob(osp.join(self.targ_rgb_dir, "*.png"))[0].shape[:2]
-        return self.targ_img_size
+    
 
     def interp_and_save_cameras(self):
         self.rgb_ts = load_ts(self.dataset_info_f, key="frames")
         interp_extrxs = create_interpolated_cams(self.rgb_ts, self.src_ts, self.src_extrxs)
+
+        h, w = self.targ_img_size
+        save_img_size = (w, h)
         create_and_write_camera_extrinsics(self.targ_camera_dir, interp_extrxs, 
                                            self.rgb_ts * 1e6, # NOTE: convert to micro seconds
                                            self.save_undist_K, 
                                            (0,0,0,0,0), # NOTE: no distortion
-                                           self.get_targ_img_size())
+                                           save_img_size)
 
     def create_and_write_metadata(self):
 
@@ -260,19 +261,20 @@ class EcamsetFormatter:
                 next_intrxs.append(interp_extrxs[i, j + 1])
 
 
-
+        h, w = self.targ_img_size
+        save_img_size = (w, h)
         create_and_write_camera_extrinsics(self.prev_cam_dir, prev_intrxs, 
                                            interp_ts * 1e6, # NOTE: convert to micro seconds
                                            self.undist_K, 
                                            (0,0,0,0,0), # NOTE: no distortion
-                                           self.targ_img_size,
+                                           save_img_size,
                                            n_zeros=6)
         
         create_and_write_camera_extrinsics(self.next_cam_dir, next_intrxs, 
                                            interp_ts * 1e6, # NOTE: convert to micro seconds
                                            self.undist_K, 
                                            (0,0,0,0,0), # NOTE: no distortion 
-                                           self.targ_img_size,
+                                           save_img_size,
                                            n_zeros=6)
 
     def create_and_write_metadata(self):
