@@ -71,7 +71,7 @@ def make_camera(ext_mtx, intr_mtx, dist, img_size, transform=None):
 
     return new_camera
 
-def create_and_write_camera_extrinsics(extrinsic_dir, cams, time_stamps, intr_mtx, dist, img_size, scale=None, ret_cam=False, transform=None):
+def create_and_write_camera_extrinsics(extrinsic_dir, cams, time_stamps, intr_mtx, dist, img_size, scale=None, ret_cam=False, transform=None, n_zeros=6):
     """
     create the extrinsics and save it
     scale: float = scale to resize image by; will apply to camera
@@ -88,7 +88,7 @@ def create_and_write_camera_extrinsics(extrinsic_dir, cams, time_stamps, intr_mt
            camera = camera.scale(scale)
 
         cameras.append(camera)
-        targ_cam_path = osp.join(extrinsic_dir, str(i).zfill(6) + ".json")
+        targ_cam_path = osp.join(extrinsic_dir, str(i).zfill(n_zeros) + ".json")
         print("saving to", targ_cam_path)
         cam_json = camera.to_json()
         cam_json["t"] = float(t)
