@@ -148,3 +148,10 @@ def scale_intrxs(intrxs:np.ndarray, scale:float):
     u = intrxs.copy()
     u[:2] = u[:2] * scale
     return u
+
+
+def to_hom(mtxs):
+    u = np.zeros((len(mtxs), 4, 4))
+    u[:, 3, 3] = 1
+    u[:,:3, :4] = mtxs[:,:3, :4]
+    return u
