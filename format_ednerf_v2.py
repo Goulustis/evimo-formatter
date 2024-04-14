@@ -328,14 +328,6 @@ def create_and_save_relcam(Trc, Tre, targ_dir):
     
 
 
-
-def to_hom(mtxs):
-    u = np.zeros((len(mtxs), 4, 4))
-    u[:, 3, 3] = 1
-    u[:,:3, :4] = mtxs[:,:3, :4]
-    return u
-
-
 def main(src_rgb_dir, src_evs_dir, targ_dir, n_bin=4):
     col_targ_dir = osp.join(targ_dir, "colcam_set")
     evs_targ_dir = osp.join(targ_dir, "ecam_set")
