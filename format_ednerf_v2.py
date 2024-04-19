@@ -328,7 +328,7 @@ def create_and_save_relcam(Trc, Tre, targ_dir):
     
 
 
-def main(src_rgb_dir, src_evs_dir, targ_dir, n_bin=4):
+def create_ednerf_v2(src_rgb_dir, src_evs_dir, targ_dir, n_bin=4):
     col_targ_dir = osp.join(targ_dir, "colcam_set")
     evs_targ_dir = osp.join(targ_dir, "ecam_set")
 
@@ -343,6 +343,23 @@ def main(src_rgb_dir, src_evs_dir, targ_dir, n_bin=4):
 
     create_and_save_relcam(col_formatter.Trc, evs_formatter.Tre, targ_dir)
 
+
+def create_full_camera_traj(src_rgb_dir, targ_dir):
+    os.makedirs(targ_dir, exist_ok=True)
+
+    col_formatter = ColsetFormatter(src_rgb_dir, targ_dir)
+    src_ts, extrxs = col_formatter.src_ts, col_formatter.src_extrxs
+    h, w = col_formatter.ori_img_size
+    create_and_write_camera_extrinsics(
+        targ_dir, extrxs, 
+        src_ts * 1e6,
+        col_formatter.src_K, 
+        col_formatter.src_D,
+        (w, h),
+        n_zeros=6
+    )
+
+
 if __name__ == "__main__":
     rgb_src_root = "/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/flea3_7"
     evs_src_root = "/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/samsung_mono"
@@ -353,9 +370,14 @@ if __name__ == "__main__":
     targ_dir = "/ubc/cs/research/kmyi/matthew/projects/ed-nerf/data/depth_var_1_lr_000000_rect"
     # targ_dir = "debug"
 
-    main(
+    # create_ednerf_v2(
+    #     rgb_src_dir,
+    #     evs_src_dir,
+    #     targ_dir,
+    #     n_bin=4  # bins used for ecamset
+    # )
+
+    create_full_camera_traj(
         rgb_src_dir,
-        evs_src_dir,
-        targ_dir,
-        n_bin=4
+        "/ubc/cs/research/kmyi/matthew/projects/ed-nerf/data/depth_var_1_lr_000000/colcam_set/full_camera"
     )
