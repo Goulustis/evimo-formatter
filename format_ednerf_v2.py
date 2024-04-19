@@ -254,25 +254,25 @@ class EcamsetFormatter:
     
     def create_and_save_cameras(self, interp_ts):
         interp_extrxs = create_interpolated_cams(interp_ts, self.src_ts, self.src_extrxs)
-        prev_intrxs, next_intrxs = [], []
+        prev_extrnxs, next_extrnxs = [], []
 
         interp_extrxs = interp_extrxs.reshape(-1, self.n_bin, *interp_extrxs.shape[-2:])
         for i in range(len(interp_extrxs)):
             for j in range(self.n_bin - 1):
-                prev_intrxs.append(interp_extrxs[i, j])
-                next_intrxs.append(interp_extrxs[i, j + 1])
+                prev_extrnxs.append(interp_extrxs[i, j])
+                next_extrnxs.append(interp_extrxs[i, j + 1])
 
 
         h, w = self.targ_img_size
         save_img_size = (w, h)
-        create_and_write_camera_extrinsics(self.prev_cam_dir, prev_intrxs, 
+        create_and_write_camera_extrinsics(self.prev_cam_dir, prev_extrnxs, 
                                            interp_ts * 1e6, # NOTE: convert to micro seconds
                                            self.undist_K, 
                                            (0,0,0,0,0), # NOTE: no distortion
                                            save_img_size,
                                            n_zeros=6)
         
-        create_and_write_camera_extrinsics(self.next_cam_dir, next_intrxs, 
+        create_and_write_camera_extrinsics(self.next_cam_dir, next_extrnxs, 
                                            interp_ts * 1e6, # NOTE: convert to micro seconds
                                            self.undist_K, 
                                            (0,0,0,0,0), # NOTE: no distortion 
