@@ -65,7 +65,7 @@ def main(targ_dir, evs_data_dir, rgb_data_dir, make_eimgs=True):
 
     ecams = create_interpolated_cams(eimg_ts, ctrl_evs_ts, ctrl_evs_cams)
 
-    create_and_write_camera_extrinsics(extrinsic_targ_dir, ecams, eimg_ts, intr_mtx, dist, img_size=(640, 480))
+    create_and_write_camera_extrinsics(extrinsic_targ_dir, ecams, eimg_ts * 1e6, intr_mtx, dist, img_size=(640, 480))
 
     # create metadata.json
     write_metadata(eimgs_ids, eimg_ts, targ_dir)
