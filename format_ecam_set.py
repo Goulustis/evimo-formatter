@@ -34,7 +34,7 @@ def calc_time_delta(triggers, min_mult=3):
     n_mult = np.round(delta_t/0.005)
     n_mult = max(min_mult, n_mult)
     
-    return delta_t/n_mult
+    return np.ceil(delta_t/n_mult).astype(int)
 
 def main(targ_dir, evs_data_dir, rgb_data_dir, make_eimgs=True):
     make_trig_events = False  ## for debug only
