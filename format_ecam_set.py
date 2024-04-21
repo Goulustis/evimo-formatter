@@ -30,7 +30,9 @@ def save_eimgs(eimgs, targ_dir):
 
 
 def calc_time_delta(triggers, min_mult=3):
-    delta_t = triggers[1] - triggers[0]
+    t_diffs = np.diff(triggers)
+    delta_t = np.mean(t_diffs) + np.std(t_diffs)
+    # delta_t = triggers[1] - triggers[0]
     n_mult = np.round(delta_t/0.005)
     n_mult = max(min_mult, n_mult)
     
