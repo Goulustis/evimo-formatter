@@ -228,7 +228,22 @@ def write_metadata(img_ids, trig_ids, triggers, train_ids, val_ids, test_ids, sa
         json.dump(metadata_json, f, indent=2)
 
 
+def write_depth(targ_dir, rgb_data_dir):
+    save_f = osp.join(targ_dir, "depth.json")
+    depth_f = osp.join(rgb_data_dir, "dataset_depth.npz")
+    depths = np.load(depth_f)
+    frame_ids = sorted(list(depths.keys()))
 
+    depth_dict = {}
+    for i in tqdm(range(len(frame_ids)), desc="processing depth"):
+        depth = depths[frame_ids[i]].astype(np.float32) / 1000   # evimo_flow.py divide 1k for depth reprojection
+        depth_dict[str(i).zfill(5)] = {"min" : float(depth.min()),
+                                       "max" : float(depth.max())}
+    
+    with open(save_f, "w") as f:
+        json.dump(depth_dict, f, indent=2)
+
+        
 def main(targ_dir, trig_ids_f, rgb_data_dir):
 
     os.makedirs(targ_dir, exist_ok=True)
@@ -257,6 +272,9 @@ def main(targ_dir, trig_ids_f, rgb_data_dir):
 
     ## write metadata
     write_metadata(img_ids, trig_ids, rgb_ts, train_ids, val_ids, test_ids, targ_dir)
+
+    ## write depth
+    write_depth(targ_dir, rgb_data_dir)
 
 
 if __name__ == "__main__":
