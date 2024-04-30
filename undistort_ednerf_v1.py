@@ -49,7 +49,8 @@ class ColUndistorter:
         def build_dist(cam_datum):
             k1, k2, k3 = cam_datum["radial_distortion"]
             p1, p2 = cam_datum["tangential_distortion"]
-            return np.array([k1, k2, p1, p2, k3])
+            # return np.array([k1, k2, p1, p2])
+            return (k1, k2, p1, p2)
 
         self.K = build_intrxs(self.cam_data[0])
         self.D = build_dist(self.cam_data[0])
@@ -62,12 +63,12 @@ class ColUndistorter:
             self.K, self.D, (im_w, im_h), 1, (im_w, im_h)
         )
         x, y, w, h = self.roi
-        self.undist_K[0, 2] = self.undist_K[0, 2] - x
-        self.undist_K[1, 2] = self.undist_K[1, 2] - y
 
         self.mapx, self.mapy = cv2.initUndistortRectifyMap(
             self.K, self.D, None, self.undist_K, (im_w, im_h), cv2.CV_32FC1
         )
+        self.undist_K[0, 2] = self.undist_K[0, 2] - x
+        self.undist_K[1, 2] = self.undist_K[1, 2] - y
 
         self.undist_fn = lambda img: cv2.remap(img, self.mapx, self.mapy, cv2.INTER_LINEAR)[y:y+h, x:x+w]
         self.targ_img_shape = (h, w)
@@ -232,6 +233,7 @@ def main(src_dir, targ_dir):
 
 if __name__ == "__main__":
     src_dir = "/ubc/cs/research/kmyi/matthew/projects/ed-nerf/data/depth_var_1_lr_000000"
-    targ_dir = "/ubc/cs/research/kmyi/matthew/projects/ed-nerf/data/depth_var_1_lr_000000_undist"
+    # targ_dir = "/ubc/cs/research/kmyi/matthew/projects/ed-nerf/data/depth_var_1_lr_000000_undist"
+    targ_dir = "debug"
 
     main(src_dir, targ_dir)
