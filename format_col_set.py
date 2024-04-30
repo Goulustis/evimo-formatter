@@ -236,7 +236,8 @@ def write_depth(targ_dir, rgb_data_dir):
 
     depth_dict = {}
     for i in tqdm(range(len(frame_ids)), desc="processing depth"):
-        depth = depths[frame_ids[i]].astype(np.float32) / 1000   # evimo_flow.py divide 1k for depth reprojection
+        depth = depths[frame_ids[i]]
+        depth = depth[depth != 0].astype(np.float32) / 1000   # evimo_flow.py divide 1k for depth reprojection
         depth_dict[str(i).zfill(5)] = {"min" : float(depth.min()),
                                        "max" : float(depth.max())}
     
@@ -288,3 +289,6 @@ if __name__ == "__main__":
 
     rgb_data_dir = find_data_dir(args.rgb_data_dir, args.scene)
     main(args.targ_dir, args.trig_ids_f, rgb_data_dir)
+    print(args.targ_dir, "\n", rgb_data_dir)
+    # write_depth("/ubc/cs/research/kmyi/matthew/projects/ed-nerf/data/depth_var_1_lr_000000/colcam_set",
+    #             "/ubc/cs/research/kmyi/matthew/backup_copy/raw_real_ednerf_data/evimo2_v2_data/npz/flea3_7/sanity/depth_var/depth_var_1_lr_000000")
